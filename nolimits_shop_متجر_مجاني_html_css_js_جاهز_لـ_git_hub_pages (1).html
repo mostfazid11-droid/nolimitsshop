@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NOLIMITS SHOP — متجر ملابس</title>
+  <meta name="description" content="متجر ملابس بسيط مجاني 100% يعمل على GitHub Pages — عملة TND وسلة شراء وطلب عبر واتساب/إيميل.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0b0c; --card:#111214; --muted:#81848b; --accent:#f4f2ec; --brand:#f4f2ec; --brand-ink:#0b0b0c;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;font-family:'Cairo',system-ui,Arial;color:#e9e9ea;background:var(--bg)}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{max-width:1100px;margin:0 auto;padding:0 16px}
+    .btn{border:0;border-radius:14px;padding:10px 16px;font-weight:700;cursor:pointer}
+    .btn-primary{background:var(--brand);color:var(--brand-ink)}
+    .btn-ghost{background:transparent;border:1px solid #2a2c30;color:#e9e9ea}
+    .btn-danger{background:#e11d48;color:white}
+    .tag{font-size:12px;padding:4px 8px;border:1px solid #2a2c30;border-radius:999px;color:#c9cace}
+    header{position:sticky;top:0;z-index:20;background:rgba(11,11,12,.7);backdrop-filter:blur(8px);border-bottom:1px solid #1b1c20}
+    header .row{display:flex;align-items:center;gap:12px;padding:10px 0}
+    .logo{display:flex;align-items:center;gap:10px}
+    .logo-badge{width:38px;height:38px;border:2px solid var(--brand);border-radius:50%;display:grid;place-items:center}
+    .logo-badge img{width:26px;height:26px;object-fit:contain;filter:invert(90%)}
+    .brand{text-transform:uppercase;font-weight:800;letter-spacing:1px}
+    .spacer{flex:1}
+    .top-actions{display:flex;align-items:center;gap:8px}
+    .search{display:flex;gap:8px}
+    .search input, select{background:#0f1013;border:1px solid #1f2126;border-radius:12px;padding:10px 12px;color:#e9e9ea}
+    .hero{background:#0d0e10;border-bottom:1px solid #1b1c20}
+    .hero .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:26px;padding:40px 0}
+    .hero-card{border:1px solid #1b1c20;border-radius:26px;padding:26px;background:linear-gradient(145deg,#121316,#0b0b0c)}
+    .hero-visual{border:1px dashed #333;border-radius:26px;min-height:220px;display:grid;place-items:center}
+    .muted{color:var(--muted)}
+    h1{margin:0 0 10px 0;font-weight:800}
+    h2{margin:0 0 12px 0}
+    .grid{display:grid;gap:16px}
+    .products{padding:28px 0}
+    .cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+    .card{background:var(--card);border:1px solid #1b1c20;border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+    .card .thumb{background:#0d0e10;height:220px;display:grid;place-items:center}
+    .card .content{padding:14px;display:flex;flex-direction:column;gap:8px}
+    .price{font-weight:800;font-size:18px}
+    .footer{border-top:1px solid #1b1c20;padding:28px 0;color:#b8babf}
+    /* Cart Drawer */
+    .drawer{position:fixed;inset:0;z-index:40;pointer-events:none}
+    .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.4);opacity:0;transition:.2s}
+    .panel{position:absolute;top:0;right:0;height:100%;width:min(92vw,420px);background:#0f1013;border-left:1px solid #1b1c20;transform:translateX(100%);transition:.25s;display:flex;flex-direction:column}
+    .drawer.open{pointer-events:auto}
+    .drawer.open .backdrop{opacity:1}
+    .drawer.open .panel{transform:translateX(0)}
+    .cart-row{display:flex;gap:10px;align-items:center}
+    .qty{display:flex;align-items:center;border:1px solid #2a2c30;border-radius:10px}
+    .qty button{background:transparent;border:0;color:#fff;width:32px;height:32px}
+    .qty span{display:inline-block;width:38px;text-align:center}
+    .sticky-cta{position:fixed;bottom:16px;left:16px;z-index:10}
+    @media (max-width: 900px){
+      .hero .grid{grid-template-columns:1fr}
+      .search{display:none}
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="container row">
+      <a href="#" class="logo">
+        <span class="logo-badge"><img src="assets/logo.png" alt="N"></span>
+        <span class="brand">NOLIMITS SHOP</span>
+      </a>
+      <span class="spacer"></span>
+      <div class="top-actions">
+        <div class="search">
+          <input id="q" placeholder="ابحث عن منتج…">
+          <select id="cat"></select>
+        </div>
+        <button id="openCart" class="btn btn-ghost">🛒 السلة <span id="cartCount" class="tag" style="margin-inline-start:6px">0</span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container grid">
+      <div class="hero-card">
+        <h1>أطلق NOLIMITS SHOP بدون تكلفة 💥</h1>
+        <p class="muted">هذا قالب مجاني 100% يعمل على GitHub Pages. عدّل المنتجات، الألوان، والأسعار بالدينار التونسي. يدعم سلة شراء وطلب عبر واتساب أو إيميل.</p>
+        <div style="margin-top:14px;display:flex;gap:8px">
+          <a href="#products" class="btn btn-primary">ابدأ التسوق</a>
+          <a href="#how" class="btn btn-ghost">طريقة النشر مجانًا</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div style="text-align:center">
+          <img src="assets/logo.png" alt="NOLIMITS" style="width:120px;margin:auto;filter:invert(90%)">
+          <div class="muted" style="margin-top:8px">شعار متجرك هنا — ارفع <b>assets/logo.png</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products" class="products container">
+    <div style="display:flex;align-items:end;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <h2>منتجات مختارة</h2>
+      <div class="muted"><span id="count">0</span> منتج</div>
+    </div>
+    <div id="cards" class="cards" aria-live="polite"></div>
+  </section>
+
+  <!-- HOWTO -->
+  <section id="how" class="container" style="padding:10px 0 32px 0">
+    <div class="card" style="padding:16px">
+      <h3 style="margin:0 0 6px 0">طريقة نشر المتجر مجانًا (GitHub Pages)</h3>
+      <ol style="margin:8px 0 0 0;color:#c9cace;line-height:1.9">
+        <li>سجّل بحساب مجاني على <b>github.com</b>.</li>
+        <li>أنشئ مستودع جديد باسم <b>nolimitsshop</b> (أو أي اسم).</li>
+        <li>ارفع هذا الملف <b>index.html</b> ومجلد <b>assets</b> (ضع شعارك باسم <b>logo.png</b> وصور المنتجات).</li>
+        <li>من إعدادات المستودع → Pages → اختر مصدر النشر <b>main / root</b>، احفظ.</li>
+        <li>سيفتح موقعك على رابط مثل: <code>https://username.github.io/nolimitsshop</code>.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <div class="brand">NOLIMITS SHOP</div>
+        <p class="muted">متجر مجاني مبني بــ HTML/CSS/JS. عدّل بحرية.</p>
+      </div>
+      <div>
+        <div class="muted">© <span id="yr"></span> — جميع الحقوق محفوظة</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CART DRAWER -->
+  <div id="drawer" class="drawer" aria-hidden="true">
+    <div class="backdrop" id="closeCart" aria-label="إغلاق"></div>
+    <aside class="panel" role="dialog" aria-label="سلة التسوق">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid #1b1c20">
+        <strong>سلة التسوق</strong>
+        <button id="closeBtn" class="btn btn-ghost">إغلاق</button>
+      </div>
+      <div id="cartList" style="padding:14px;display:flex;flex-direction:column;gap:12px;overflow:auto;flex:1"></div>
+      <div style="padding:14px;border-top:1px solid #1b1c20">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span class="muted">الإجمالي</span>
+          <strong id="total">0</strong>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="clear" class="btn btn-ghost">تفريغ السلة</button>
+          <button id="checkout" class="btn btn-primary" style="flex:1">إتمام الطلب عبر واتساب</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- STICKY CART BUTTON (mobile) -->
+  <div class="sticky-cta">
+    <button id="fab" class="btn btn-primary">🛒 <span id="fabCount">0</span></button>
+  </div>
+
+  <script>
+    // ====== بيانات المنتجات (عدّلها كما تريد) ======
+    const PRODUCTS = [
+      {
+        id: 'tee-black',
+        name: 'تي‑شيرت NOLIMITS (أسود)',
+        price: 45,
+        category: 'T‑Shirt',
+        image: 'https://picsum.photos/seed/ntee1/600/400',
+        colors: ['أسود','رمادي'],
+        sizes: ['S','M','L','XL']
+      },
+      {
+        id: 'tee-olive',
+        name: 'تي‑شيرت NOLIMITS (أخضر)',
+        price: 45,
+        category: 'T‑Shirt',
+        image: 'https://picsum.photos/seed/ntee2/600/400',
+        colors: ['أخضر زيتوني'],
+        sizes: ['M','L','XL']
+      },
+      {
+        id: 'hoodie-gray',
+        name: 'هودي NOLIMITS بسوستة',
+        price: 120,
+        category: 'Hoodie',
+        image: 'https://picsum.photos/seed/nhood/600/400',
+        colors: ['رمادي'],
+        sizes: ['M','L','XL','2XL']
+      },
+      {
+        id: 'cap-black',
+        name: 'قبعة NOLIMITS',
+        price: 30,
+        category: 'Cap',
+        image: 'https://picsum.photos/seed/ncap/600/400',
+        colors: ['أسود'],
+        sizes: ['مقاس واحد']
+      }
+    ];
+
+    const CATEGORIES = ['الكل', ...Array.from(new Set(PRODUCTS.map(p=>p.category)))];
+
+    // ====== عناصر DOM ======
+    const cards = document.getElementById('cards');
+    const catSel = document.getElementById('cat');
+    const q = document.getElementById('q');
+    const count = document.getElementById('count');
+    const yr = document.getElementById('yr');
+    const cartCount = document.getElementById('cartCount');
+    const fabCount = document.getElementById('fabCount');
+    const openCartBtn = document.getElementById('openCart');
+    const drawer = document.getElementById('drawer');
+    const closeCart = document.getElementById('closeCart');
+    const closeBtn = document.getElementById('closeBtn');
+    const cartList = document.getElementById('cartList');
+    const totalEl = document.getElementById('total');
+    const clearBtn = document.getElementById('clear');
+    const checkoutBtn = document.getElementById('checkout');
+    const fab = document.getElementById('fab');
+
+    function formatTND(v){
+      try {return new Intl.NumberFormat('ar-TN',{style:'currency',currency:'TND'}).format(v)}
+      catch{ return v.toFixed(2)+' TND'}
+    }
+
+    // ====== حالة السلة (محفوظة محليًا) ======
+    let cart = JSON.parse(localStorage.getItem('cart')||'[]');
+    function saveCart(){ localStorage.setItem('cart', JSON.stringify(cart)); }
+
+    function renderFilters(){
+      catSel.innerHTML = CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join('');
+    }
+
+    function filterProducts(){
+      const cat = catSel.value;
+      const query = (q.value||'').toLowerCase();
+      return PRODUCTS.filter(p => (cat==='الكل' || p.category===cat) && (p.name+" "+(p.colors||[]).join(' ')).toLowerCase().includes(query));
+    }
+
+    function renderProducts(){
+      const data = filterProducts();
+      count.textContent = data.length;
+      cards.innerHTML = data.map(p=>`
+        <article class="card">
+          <div class="thumb"><img src="${p.image}" alt="${p.name}"></div>
+          <div class="content">
+            <div class="tag">${p.category}</div>
+            <strong>${p.name}</strong>
+            <div class="muted" style="font-size:13px">الألوان: ${(p.colors||[]).join(', ')} — المقاسات: ${(p.sizes||[]).join(', ')}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px">
+              <div class="price">${formatTND(p.price)}</div>
+              <button class="btn btn-primary" onclick="addToCart('${p.id}')">أضف للسلة</button>
+            </div>
+          </div>
+        </article>`).join('');
+    }
+
+    function addToCart(id){
+      const p = PRODUCTS.find(x=>x.id===id);
+      const found = cart.find(x=>x.id===id);
+      if(found){found.qty++}else{cart.push({id:p.id,name:p.name,price:p.price,image:p.image,qty:1})}
+      saveCart();
+      renderCart();
+      drawer.classList.add('open');
+    }
+
+    function inc(id){ const it=cart.find(i=>i.id===id); if(it){it.qty++; saveCart(); renderCart();} }
+    function dec(id){ const it=cart.find(i=>i.id===id); if(it){ it.qty=Math.max(0,it.qty-1); if(it.qty===0){cart=cart.filter(i=>i.id!==id)} saveCart(); renderCart();} }
+    function removeItem(id){ cart = cart.filter(i=>i.id!==id); saveCart(); renderCart(); }
+    function clearCart(){ cart=[]; saveCart(); renderCart(); }
+
+    function renderCart(){
+      const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+      cartList.innerHTML = cart.length? cart.map(i=>`
+        <div class="cart-row">
+          <img src="${i.image}" alt="${i.name}" style="width:64px;height:64px;object-fit:cover;border-radius:12px;border:1px solid #1b1c20">
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:14px">${i.name}</div>
+            <div class="muted" style="font-size:12px">${formatTND(i.price)}</div>
+            <div class="qty" style="margin-top:6px">
+              <button onclick="dec('${i.id}')">−</button>
+              <span>${i.qty}</span>
+              <button onclick="inc('${i.id}')">＋</button>
+            </div>
+          </div>
+          <div style="text-align:end">
+            <div style="font-weight:700">${formatTND(i.price*i.qty)}</div>
+            <button class="btn btn-ghost" onclick="removeItem('${i.id}')">حذف</button>
+          </div>
+        </div>`).join('') : '<div class="muted" style="text-align:center">السلة فارغة.</div>';
+      totalEl.textContent = formatTND(total);
+      const c = cart.reduce((s,i)=>s+i.qty,0);
+      cartCount.textContent = c; fabCount.textContent = c;
+    }
+
+    // ====== إتمام الطلب مجانًا عبر واتساب ======
+    function checkout(){
+      const phone = '21600000000'; // ←← استبدلها برقم واتساب الخاص بك (صيغة دولية: 216XXXXXXXX)
+      if(!cart.length){alert('السلة فارغة');return}
+      const lines = cart.map(i=>`• ${i.name} × ${i.qty} = ${i.price*i.qty} TND`);
+      const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+      const msg = encodeURIComponent(`طلب جديد — NOLIMITS SHOP\n\n${lines.join('\n')}\n\nالإجمالي: ${total} TND\nالاسم: \nالعنوان: \nطريقة الدفع: عند الاستلام`);
+      const url = `https://wa.me/${phone}?text=${msg}`;
+      window.open(url,'_blank');
+    }
+
+    // ====== أحداث عامة ======
+    document.getElementById('yr').textContent = new Date().getFullYear();
+    document.getElementById('checkout').addEventListener('click', checkout);
+    document.getElementById('clear').addEventListener('click', clearCart);
+    document.getElementById('fab').addEventListener('click', ()=> drawer.classList.add('open'));
+    document.getElementById('openCart').addEventListener('click', ()=> drawer.classList.add('open'));
+    document.getElementById('closeCart').addEventListener('click', ()=> drawer.classList.remove('open'));
+    document.getElementById('closeBtn').addEventListener('click', ()=> drawer.classList.remove('open'));
+    document.getElementById('cat').addEventListener('change', renderProducts);
+    document.getElementById('q').addEventListener('input', renderProducts);
+
+    // init
+    renderFilters();
+    renderProducts();
+    renderCart();
+  </script>
+</body>
+</html>
